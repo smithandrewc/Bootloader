@@ -103,6 +103,23 @@ static struct {
 # define BOARD_LED_OFF			gpio_clear
 #endif
 
+#ifdef BOARD_AERODROID
+# define BOARD_TYPE			98
+# define BOARD_FLASH_SECTORS		23
+# define BOARD_FLASH_SIZE		(2 * 1024 * 1024)
+
+# define OSC_FREQ			24
+
+# define BOARD_PIN_LED_ACTIVITY		GPIO10
+# define BOARD_PIN_LED_BOOTLOADER	GPIO0
+# define BOARD_PORT_LED_ACTIVITY	GPIOA
+# define BOARD_PORT_LED_BOOTLOADER	GPIOB
+# define BOARD_CLOCK_LED_ACTIVITY	RCC_AHB1ENR_IOPAEN
+# define BOARD_CLOCK_LED_BOOTLOADER	RCC_AHB1ENR_IOPBEN
+# define BOARD_LED_ON			gpio_set
+# define BOARD_LED_OFF			gpio_clear
+#endif
+
 #ifdef BOARD_FMUV2
 # define BOARD_TYPE			9
 # define _FLASH_KBYTES			(*(uint16_t *)0x1fff7a22)
@@ -263,6 +280,7 @@ board_init(void)
 #endif
 
 	/* initialise LEDs */
+#ifdef BOARD_PORT_LEDS
 	rcc_peripheral_enable_clock(&RCC_AHB1ENR, BOARD_CLOCK_LEDS);
 	gpio_mode_setup(
 		BOARD_PORT_LEDS, 
@@ -277,7 +295,36 @@ board_init(void)
 	BOARD_LED_ON (
 		BOARD_PORT_LEDS,
 		BOARD_PIN_LED_BOOTLOADER | BOARD_PIN_LED_ACTIVITY);
-
+#else
+	rcc_peripheral_enable_clock(&RCC_AHB1ENR, BOARD_CLOCK_LED_ACTIVITY);
+	rcc_peripheral_enable_clock(&RCC_AHB1ENR, BOARD_CLOCK_LED_BOOTLOADER);
+	gpio_mode_setup(
+		BOARD_PORT_LED_BOOTLOADER, 
+		GPIO_MODE_OUTPUT, 
+		GPIO_PUPD_NONE,
+		BOARD_PIN_LED_BOOTLOADER);
+	gpio_mode_setup(
+		BOARD_PORT_LED_ACTIVITY, 
+		GPIO_MODE_OUTPUT, 
+		GPIO_PUPD_NONE,
+		BOARD_PIN_LED_ACTIVITY);
+	gpio_set_output_options(
+		BOARD_PORT_LED_BOOTLOADER,
+		GPIO_OTYPE_PP,
+		GPIO_OSPEED_2MHZ,
+		BOARD_PIN_LED_BOOTLOADER);
+	BOARD_LED_ON (
+		BOARD_PORT_LED_BOOTLOADER,
+		BOARD_PIN_LED_BOOTLOADER);
+	gpio_set_output_options(
+		BOARD_PORT_LED_ACTIVITY,
+		GPIO_OTYPE_PP,
+		GPIO_OSPEED_2MHZ,
+		BOARD_PIN_LED_ACTIVITY);
+	BOARD_LED_ON (
+		BOARD_PORT_LED_ACTIVITY,
+		BOARD_PIN_LED_ACTIVITY);
+#endif
 	/* enable the power controller clock */
 	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_PWREN);
 
@@ -355,10 +402,18 @@ led_on(unsigned led)
 {
 	switch (led) {
 	case LED_ACTIVITY:
+#ifdef BOARD_PORT_LEDS
 		BOARD_LED_ON (BOARD_PORT_LEDS, BOARD_PIN_LED_ACTIVITY);
+#else
+		BOARD_LED_ON (BOARD_PORT_LED_ACTIVITY, BOARD_PIN_LED_ACTIVITY);
+#endif
 		break;
 	case LED_BOOTLOADER:
+#ifdef BOARD_PORT_LEDS
 		BOARD_LED_ON (BOARD_PORT_LEDS, BOARD_PIN_LED_BOOTLOADER);
+#else
+		BOARD_LED_ON (BOARD_PORT_LED_BOOTLOADER, BOARD_PIN_LED_BOOTLOADER);
+#endif
 		break;
 	}
 }
@@ -368,10 +423,18 @@ led_off(unsigned led)
 {
 	switch (led) {
 	case LED_ACTIVITY:
+#ifdef BOARD_PORT_LEDS
 		BOARD_LED_OFF (BOARD_PORT_LEDS, BOARD_PIN_LED_ACTIVITY);
+#else
+		BOARD_LED_OFF (BOARD_PORT_LED_ACTIVITY, BOARD_PIN_LED_ACTIVITY);
+#endif
 		break;
 	case LED_BOOTLOADER:
+#ifdef BOARD_PORT_LEDS
 		BOARD_LED_OFF (BOARD_PORT_LEDS, BOARD_PIN_LED_BOOTLOADER);
+#else
+		BOARD_LED_OFF (BOARD_PORT_LED_BOOTLOADER, BOARD_PIN_LED_BOOTLOADER);
+#endif
 		break;
 	}
 }
@@ -381,10 +444,18 @@ led_toggle(unsigned led)
 {
 	switch (led) {
 	case LED_ACTIVITY:
+#ifdef BOARD_PORT_LEDS
 		gpio_toggle(BOARD_PORT_LEDS, BOARD_PIN_LED_ACTIVITY);
+#else
+		gpio_toggle(BOARD_PORT_LED_ACTIVITY, BOARD_PIN_LED_ACTIVITY);
+#endif
 		break;
 	case LED_BOOTLOADER:
+#ifdef BOARD_PORT_LEDS
 		gpio_toggle(BOARD_PORT_LEDS, BOARD_PIN_LED_BOOTLOADER);
+#else
+		gpio_toggle(BOARD_PORT_LED_BOOTLOADER, BOARD_PIN_LED_BOOTLOADER);
+#endif
 		break;
 	}
 }
