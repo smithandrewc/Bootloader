@@ -35,7 +35,7 @@ export COMMON_SRCS	 = bl.c
 #
 # Bootloaders to build
 #
-TARGETS			 = px4fmu_bl px4fmuv2_bl px4flow_bl stm32f4discovery_bl px4io_bl
+TARGETS			 = px4fmu_bl px4fmuv2_bl px4flow_bl stm32f4discovery_bl px4io_bl aerodroid_bl
 
 # px4io_bl px4flow_bl
 
@@ -60,6 +60,9 @@ px4fmuv2_bl: $(MAKEFILE_LIST)
 
 stm32f4discovery_bl: $(MAKEFILE_LIST)
 	make -f Makefile.f4 TARGET=discovery INTERFACE=USB BOARD=DISCOVERY USBDEVICESTRING="\\\"PX4 BL DISCOVERY\\\"" USBPRODUCTID="0x0001"
+
+aerodroid_bl: $(MAKEFILE_LIST)
+	make -f Makefile.f4 TARGET=aerodroid INTERFACE=USB BOARD=AERODROID USBDEVICESTRING="\\\"PX4 BL AERODROID\\\"" USBPRODUCTID="0x0001"
 
 px4flow_bl: $(MAKEFILE_LIST)
 	make -f Makefile.f4 TARGET=flow INTERFACE=USB BOARD=FLOW USBDEVICESTRING="\\\"PX4 FLOW v1.3\\\"" USBPRODUCTID="0x0015"
