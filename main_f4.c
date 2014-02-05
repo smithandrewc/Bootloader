@@ -120,7 +120,7 @@ static struct {
 # define BOARD_LED_OFF			gpio_clear
 #endif
 
-#ifdef BOARD_AERODROIDV2
+#ifdef BOARD_AERODROID
 # define BOARD_TYPE			98
 # define _FLASH_KBYTES			(*(uint16_t *)0x1fff7a22)
 # define BOARD_FLASH_SECTORS		((_FLASH_KBYTES == 0x400) ? 11 : 23)
@@ -128,18 +128,18 @@ static struct {
 
 # define OSC_FREQ			24
 
-# define BOARD_PIN_LED_ACTIVITY		GPIO14	
-# define BOARD_PIN_LED_BOOTLOADER	GPIO15
-# define BOARD_PORT_LEDS		GPIOB
-# define BOARD_CLOCK_LEDS		RCC_AHB1ENR_IOPBEN
-# define BOARD_LED_ON			gpio_clear
-# define BOARD_LED_OFF			gpio_set
+# define BOARD_PIN_LED_ACTIVITY		GPIO10	
+# define BOARD_PIN_LED_BOOTLOADER	GPIO9
+# define BOARD_PORT_LEDS		GPIOE
+# define BOARD_CLOCK_LEDS		RCC_AHB1ENR_IOPEEN
+# define BOARD_LED_ON			gpio_set
+# define BOARD_LED_OFF			gpio_clear
 
-# define BOARD_FORCE_BL_PIN_OUT		GPIO14
-# define BOARD_FORCE_BL_PIN_IN		GPIO11
-# define BOARD_FORCE_BL_PORT		GPIOE
+# define BOARD_FORCE_BL_PIN_OUT		GPIO0
+# define BOARD_FORCE_BL_PIN_IN		GPIO1
+# define BOARD_FORCE_BL_PORT		GPIOB
 # define BOARD_FORCE_BL_CLOCK_REGISTER	RCC_AHB1ENR
-# define BOARD_FORCE_BL_CLOCK_BIT	RCC_AHB1ENR_IOPEEN
+# define BOARD_FORCE_BL_CLOCK_BIT	RCC_AHB1ENR_IOPBEN
 # define BOARD_FORCE_BL_PULL		GPIO_PUPD_PULLUP
 
 //# define BOARD_BOOT_FAIL_DETECT		/* V2 boards should support boot failure detection */
